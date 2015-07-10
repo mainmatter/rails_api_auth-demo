@@ -53,7 +53,7 @@ Send the request. You should get an 200 OK response, and a JSON payload like thi
 
 ```
 {"access_token":"5d54182547509dfc1246cee750e69408c8e1aa7b88ccc16bfab8ac2c4d8aa1723..."}
-
+```
 Finally, use this token to access this demo's protected url:
 
 Set Paw to send a GET request to
