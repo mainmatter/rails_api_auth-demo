@@ -1,3 +1,14 @@
+GIT
+  remote: git://github.com/simplabs/rails_api_auth.git
+  revision: 3aed5317ee4f234cd3ea5d0a9e3a3ff578b9bee3
+  specs:
+    rails_api_auth (0.0.2)
+      bcrypt (~> 3.1.7)
+      email_validator (~> 1.6.0)
+      faker (~> 1.4.3)
+      httparty (~> 0.13.3)
+      rails (>= 3.2.6, < 5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -46,7 +57,7 @@ GEM
       i18n (~> 0.5)
     globalid (0.3.5)
       activesupport (>= 4.1.0)
-    httparty (0.13.3)
+    httparty (0.13.5)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.7.0)
@@ -86,12 +97,6 @@ GEM
       rails-deprecated_sanitizer (>= 1.0.1)
     rails-html-sanitizer (1.0.2)
       loofah (~> 2.0)
-    rails_api_auth (0.0.1)
-      bcrypt (~> 3.1.7)
-      email_validator (~> 1.6.0)
-      faker (~> 1.4.3)
-      httparty (~> 0.13.3)
-      rails (>= 3.2.6, < 5)
     railties (4.2.3)
       actionpack (= 4.2.3)
       activesupport (= 4.2.3)
@@ -117,7 +122,7 @@ PLATFORMS
 DEPENDENCIES
   rails (= 4.2.3)
   rails-api
-  rails_api_auth (= 0.0.1)
+  rails_api_auth!
   spring
   sqlite3
 
