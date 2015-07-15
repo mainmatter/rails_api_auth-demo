@@ -1,77 +1,135 @@
-This is a demo application for the [rails_api_auth engine](https://github.com/simplabs/rails_api_auth).
+# Rails API Auth Demo
 
-Steps to use it:
+This is a demo application for the
+[rails_api_auth engine](https://github.com/simplabs/rails_api_auth).
 
-```
+## Setup
+
+Install the demo application with
+
+```bash
 git clone git@github.com:simplabs/rails_api_auth-demo.git
 cd rails_api_auth-demo
 rake db:migrate
 ```
 
-Create a sample Facebook application at [http://developers.facebook.com](http://developers.facebook.com)
+## Usage
 
-Use the credentials to set the `ENV['FB_APP_ID']` and `ENV['FB_APP_SECRET']` variables, which will be used by config/initializers/facebook.rb:
+### Resource Owner Password Credentials Grant
 
-```
-Rails.application.config.x.facebook.tap do |facebook|
-  facebook.app_id       = ENV['FB_APP_ID']
-  facebook.app_secret   = ENV['FB_APP_SECRET']
-  facebook.graph_url    = 'https://graph.facebook.com/v2.3'
-  facebook.redirect_uri = 'http://localhost:3000'
-end
-```
+The _"Resource Owner Password Credentials Grant"_ OAuth 2.0 flow allows users
+to __acquire a Bearer token from the application in exchange for their
+credentials__ (`username` and `password`). This is the simplest OAuth 2.0 flow
+and the one used by most client applications that authenticate against their
+own companion API.
 
-And use them also to fetch a temporary `auth_code` to post to our demo. Go to this url on your browser, after replacing FB_APP_ID with your developer app's app id:
+To acquire a Bearer token from the application you first need to __create a
+`Login` model__ that stores the credentials as well as the Bearer token:
 
-```
-https://www.facebook.com/dialog/oauth?client_id=FB_APP_ID&scope=public_profile,email&redirect_uri=http://localhost:3000
+```bash
+rails console
 ```
 
-You should get redirected to an url with an access token appended to it, like this one:
-
-```
-http://localhost:3000/?code=AQBYzxwK7zVQnHQRmXRHNgIcQlcufxdMaUXt8U2mgqJDXDXu1yNYR...
+```ruby
+Login.create!(email: '<some-email-address>', password: '<some-password>', password_confirmation: '<some-password>')
 ```
 
-Copy the string after `code=`.
+The Bearer token is assigned as a random string automatically when the `Login`
+model is created.
 
-Start-up your rails server:
+You can then use these credentials to acquire a Bearer token from the
+application:
 
-```
-rails s
-```
-
-Open [Paw](https://luckymarmot.com/paw) and set it to POST to this url with the above code pasted after `auth_code=`
-
-```
-http://localhost:3000/token?grant_type=facebook_auth_code&auth_code=AQBYzxwK7zVQnHQRmXRHNgIcQlcufxdMaUXt8U2mgqJDXDXu1yNYR
+```bash
+curl -d "grant_type=password&username=email%40test.com&password=test" "http://localhost:3000/token"
+{"access_token":"eb7f3ab26a39eec0cdda82803e6f225d70ecad4cb719d801b826ba84555c2e8698f630bca20639f0ea79b29fe99ab7c7a3d781fc9c0696dc17a7f36bf1faac2ed44d9704161ab29715c7054177e35f49a4fd7bbc8e6b4eeb40e2ab362b82f5f337f7df4739fa1366ac7d1fce38429cbfec45c85831564bdd5647537d9b"}%
 ```
 
-(You also use `curl` on the command line, if you prefer)
+With that Bearer token you can then request the application's `authenticated`
+route that requires the presence of a Bearer token in the request in order to
+be accessible:
 
-Send the request. You should get an 200 OK response, and a JSON payload like this in the body:
+```bash
+curl -i -H "Authorization: Bearer eb7f3ab26a39eec0cdda82803e6f225d70ecad4cb719d801b826ba84555c2e8698f630bca20639f0ea79b29fe99ab7c7a3d781fc9c0696dc17a7f36bf1faac2ed44d9704161ab29715c7054177e35f49a4fd7bbc8e6b4eeb40e2ab362b82f5f337f7df4739fa1366ac7d1fce38429cbfec45c85831564bdd5647537d9b" "http://localhost:3000/authenticated"
+HTTP/1.1 200 OK 
+X-Frame-Options: SAMEORIGIN
+X-Xss-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Type: text/html; charset=utf-8
+Etag: W/"a79738749bc447f17b58b2936a48b606"
+Cache-Control: max-age=0, private, must-revalidate
+X-Request-Id: 8af79fb0-77ee-446b-b09f-761ba43da64d
+X-Runtime: 0.010946
+Server: WEBrick/1.3.1 (Ruby/2.2.1/2015-02-26)
+Date: Wed, 15 Jul 2015 09:00:13 GMT
+Content-Length: 20
+Connection: Keep-Alive
 
-```
-{"access_token":"5d54182547509dfc1246cee750e69408c8e1aa7b88ccc16bfab8ac2c4d8aa1723..."}
-```
-Finally, use this token to access this demo's protected url:
-
-Set Paw to send a GET request to
-
-```
-http://localhost:3000/authenticated
-```
-
-With the following header:
-
-```
-Authorization: Bearer 5d54182547509dfc1246cee750e69408c8e1aa7b88ccc16bfab8ac2c4d8aa1723... (your token)
-```
-
-You should see the response body like this:
-
-```
-FB uid 12323123544 is logged in
+{"success":true}%
 ```
 
-Where 12323123544 a facebook uid.
+When omitting the Bearer token or send an invalid one the route isn't
+accessible and will respond with HTTP status 401:
+
+```bash
+curl -i "http://localhost:3000/authenticated"
+HTTP/1.1 401 Unauthorized 
+X-Frame-Options: SAMEORIGIN
+X-Xss-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Type: text/html
+Cache-Control: no-cache
+X-Request-Id: a2094bf9-28e4-45e4-99c0-ece3d170e8e3
+X-Runtime: 0.002080
+Server: WEBrick/1.3.1 (Ruby/2.2.1/2015-02-26)
+Date: Wed, 15 Jul 2015 09:01:42 GMT
+Content-Length: 0
+Connection: Keep-Alive
+```
+
+### Facebook authentication
+
+The __application also allows authentication with a Facebook account__. To
+authenticate with your Facebook account you __first need to acquire an
+authentication code for the _"Rails API Auth Demo"_ Facebook application__ from
+Facebook (in a real client application, the user would be redirected there or
+would see this page in a popup):
+
+```
+https://www.facebook.com/dialog/oauth?client_id=708377659294239&scope=public_profile,email&redirect_uri=http://localhost:3000/
+```
+
+After granting access to the application, you will be redirected to your
+application with an auth code appended to the URL (in a real client application,
+the client would intercept that redirect and read the auth code from the URL).
+
+You can now __use the auth code to acquire a Bearer token from the Rails
+application__. The Rails application will validate the auth code with
+Facebook's API:
+
+```bash
+curl -d "grant_type=facebook_auth_code&auth_code=<auth-code>" "http://localhost:3000/token"
+{"access_token":"eb7f3ab26a39eec0cdda82803e6f225d70ecad4cb719d801b826ba84555c2e8698f630bca20639f0ea79b29fe99ab7c7a3d781fc9c0696dc17a7f36bf1faac2ed44d9704161ab29715c7054177e35f49a4fd7bbc8e6b4eeb40e2ab362b82f5f337f7df4739fa1366ac7d1fce38429cbfec45c85831564bdd5647537d9b"}%
+```
+
+That Bearer token can be used then to request the authenticated route in the
+Rails app like above:
+
+```bash
+curl -i -H "Authorization: Bearer eb7f3ab26a39eec0cdda82803e6f225d70ecad4cb719d801b826ba84555c2e8698f630bca20639f0ea79b29fe99ab7c7a3d781fc9c0696dc17a7f36bf1faac2ed44d9704161ab29715c7054177e35f49a4fd7bbc8e6b4eeb40e2ab362b82f5f337f7df4739fa1366ac7d1fce38429cbfec45c85831564bdd5647537d9b" "http://localhost:3000/authenticated"
+HTTP/1.1 200 OK 
+X-Frame-Options: SAMEORIGIN
+X-Xss-Protection: 1; mode=block
+X-Content-Type-Options: nosniff
+Content-Type: text/html; charset=utf-8
+Etag: W/"a79738749bc447f17b58b2936a48b606"
+Cache-Control: max-age=0, private, must-revalidate
+X-Request-Id: 8af79fb0-77ee-446b-b09f-761ba43da64d
+X-Runtime: 0.010946
+Server: WEBrick/1.3.1 (Ruby/2.2.1/2015-02-26)
+Date: Wed, 15 Jul 2015 09:00:13 GMT
+Content-Length: 20
+Connection: Keep-Alive
+
+{"success":true}%
+```
