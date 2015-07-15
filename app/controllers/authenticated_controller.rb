@@ -7,7 +7,7 @@ class AuthenticatedController < ApplicationController
   before_action :authenticate!
 
   def index
-    render text: "FB uid #{current_login.facebook_uid} is logged in"
+    render json: { success: true }
   end
 
 end
