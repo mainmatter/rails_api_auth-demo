@@ -1,11 +1,10 @@
 GIT
   remote: git://github.com/simplabs/rails_api_auth.git
-  revision: 3aed5317ee4f234cd3ea5d0a9e3a3ff578b9bee3
+  revision: b5e7262eca1929f36a686eed9985ea0c48412705
   specs:
     rails_api_auth (0.0.2)
       bcrypt (~> 3.1.7)
       email_validator (~> 1.6.0)
-      faker (~> 1.4.3)
       httparty (~> 0.13.3)
       rails (>= 3.2.6, < 5)
 
@@ -47,7 +46,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    arel (6.0.0)
+    arel (6.0.2)
     bcrypt (3.1.10)
     builder (3.2.2)
     dotenv (2.0.2)
@@ -57,8 +56,6 @@ GEM
     email_validator (1.6.0)
       activemodel
     erubis (2.7.0)
-    faker (1.4.3)
-      i18n (~> 0.5)
     globalid (0.3.5)
       activesupport (>= 4.1.0)
     httparty (0.13.5)
@@ -126,3 +123,6 @@ DEPENDENCIES
   rails_api_auth!
   spring
   sqlite3
+
+BUNDLED WITH
+   1.10.6
