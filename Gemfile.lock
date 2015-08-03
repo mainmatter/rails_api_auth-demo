@@ -1,10 +1,9 @@
 GIT
   remote: git://github.com/simplabs/rails_api_auth.git
-  revision: b5e7262eca1929f36a686eed9985ea0c48412705
+  revision: a07232b01ea930de545c632f742f073915c1fbda
   specs:
-    rails_api_auth (0.0.2)
+    rails_api_auth (0.0.1)
       bcrypt (~> 3.1.7)
-      email_validator (~> 1.6.0)
       httparty (~> 0.13.3)
       rails (>= 3.2.6, < 5)
 
@@ -53,8 +52,6 @@ GEM
     dotenv-rails (2.0.2)
       dotenv (= 2.0.2)
       railties (~> 4.0)
-    email_validator (1.6.0)
-      activemodel
     erubis (2.7.0)
     globalid (0.3.5)
       activesupport (>= 4.1.0)

@@ -31,7 +31,7 @@ rails console
 ```
 
 ```ruby
-Login.create!(email: '<some-email-address>', password: '<some-password>', password_confirmation: '<some-password>')
+Login.create!(identification: '<some-email-address>', password: '<some-password>', password_confirmation: '<some-password>')
 ```
 
 The Bearer token is assigned as a random string automatically when the `Login`
