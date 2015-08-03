@@ -37,12 +37,18 @@ Login.create!(email: '<some-email-address>', password: '<some-password>', passwo
 The Bearer token is assigned as a random string automatically when the `Login`
 model is created.
 
+Start the Rails server:
+
+```bash
+rails server
+```
+
 You can then use these credentials to acquire a Bearer token from the
 application:
 
 ```bash
 curl -d "grant_type=password&username=email%40test.com&password=test" "http://localhost:3000/token"
-{"access_token":"eb7f3ab26a39eec0cdda82803e6f225d70ecad4cb719d801b826ba84555c2e8698f630bca20639f0ea79b29fe99ab7c7a3d781fc9c0696dc17a7f36bf1faac2ed44d9704161ab29715c7054177e35f49a4fd7bbc8e6b4eeb40e2ab362b82f5f337f7df4739fa1366ac7d1fce38429cbfec45c85831564bdd5647537d9b"}%
+{"access_token":"<some token>"}%
 ```
 
 With that Bearer token you can then request the application's `authenticated`
@@ -50,7 +56,7 @@ route that requires the presence of a Bearer token in the request in order to
 be accessible:
 
 ```bash
-curl -i -H "Authorization: Bearer eb7f3ab26a39eec0cdda82803e6f225d70ecad4cb719d801b826ba84555c2e8698f630bca20639f0ea79b29fe99ab7c7a3d781fc9c0696dc17a7f36bf1faac2ed44d9704161ab29715c7054177e35f49a4fd7bbc8e6b4eeb40e2ab362b82f5f337f7df4739fa1366ac7d1fce38429cbfec45c85831564bdd5647537d9b" "http://localhost:3000/authenticated"
+curl -i -H "Authorization: Bearer <some token>" "http://localhost:3000/authenticated"
 HTTP/1.1 200 OK 
 X-Frame-Options: SAMEORIGIN
 X-Xss-Protection: 1; mode=block
@@ -103,13 +109,17 @@ After granting access to the application, you will be redirected to your
 application with an auth code appended to the URL (in a real client application,
 the client would intercept that redirect and read the auth code from the URL).
 
+```
+http://localhost:3000/?code=<auth code>
+```
+
 You can now __use the auth code to acquire a Bearer token from the Rails
 application__. The Rails application will validate the auth code with
 Facebook's API:
 
 ```bash
-curl -d "grant_type=facebook_auth_code&auth_code=<auth-code>" "http://localhost:3000/token"
-{"access_token":"eb7f3ab26a39eec0cdda82803e6f225d70ecad4cb719d801b826ba84555c2e8698f630bca20639f0ea79b29fe99ab7c7a3d781fc9c0696dc17a7f36bf1faac2ed44d9704161ab29715c7054177e35f49a4fd7bbc8e6b4eeb40e2ab362b82f5f337f7df4739fa1366ac7d1fce38429cbfec45c85831564bdd5647537d9b"}%
+curl -d "grant_type=facebook_auth_code&auth_code=<auth code>" "http://localhost:3000/token"
+{"access_token":"<some token>"}%
 ```
 
 That Bearer token can be used then to request the authenticated route in the
